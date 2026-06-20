@@ -4,328 +4,530 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Library</title>
-<link rel="preconnect" href="https://m.media-amazon.com" />
 <style>
   :root {
-    --bg: #faf9f7;
-    --surface: #ffffff;
-    --text: #1a1a1a;
-    --muted: #6b6b6b;
-    --border: #e8e6e1;
-    --accent: #1a1a1a;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
-    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1), 0 16px 40px rgba(0, 0, 0, 0.12);
+    --bg: #faf9f7; --surface: #ffffff; --text: #1a1a1a; --muted: #6b6b6b;
+    --border: #e8e6e1; --accent: #1a1a1a; --danger: #b3261e;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.05);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.1), 0 16px 40px rgba(0,0,0,.12);
   }
   :root[data-theme="dark"] {
-    --bg: #0f0f10;
-    --surface: #1a1a1c;
-    --text: #f2f1ee;
-    --muted: #9a9a9a;
-    --border: #2a2a2d;
-    --accent: #f2f1ee;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.5), 0 16px 40px rgba(0, 0, 0, 0.5);
+    --bg: #0f0f10; --surface: #1a1a1c; --text: #f2f1ee; --muted: #9a9a9a;
+    --border: #2a2a2d; --accent: #f2f1ee; --danger: #f2675f;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.5), 0 16px 40px rgba(0,0,0,.5);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text); line-height: 1.5;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background .3s ease, color .3s ease;
   }
+  .hidden { display: none !important; }
 
+  /* ---- buttons / inputs ---- */
+  button { font: inherit; cursor: pointer; }
+  .btn {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: .5rem .9rem; border-radius: 10px; font-size: .9rem;
+    display: inline-flex; align-items: center; gap: .4rem;
+    transition: border-color .2s, transform .15s, background .2s;
+  }
+  .btn:hover { border-color: var(--muted); transform: translateY(-1px); }
+  .btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .btn.danger { color: var(--danger); border-color: var(--danger); }
+  .btn.icon { width: 38px; height: 38px; padding: 0; justify-content: center; }
+  input, textarea, select {
+    font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 10px; padding: .6rem .7rem; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--muted); }
+  label { display: block; font-size: .8rem; color: var(--muted); margin: 0 0 .3rem; }
+
+  /* ---- header ---- */
   header {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 3rem 2rem 1.5rem;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem 1rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
   }
-  .brand { display: flex; align-items: baseline; gap: 0.75rem; }
-  h1 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  .count { color: var(--muted); font-size: 0.95rem; }
+  .brand { display: flex; align-items: baseline; gap: .75rem; }
+  h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -.02em; }
+  .count { color: var(--muted); font-size: .95rem; }
+  .controls { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+  .account { font-size: .85rem; color: var(--muted); }
 
-  .toggle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    display: grid; place-items: center;
-    transition: border-color 0.2s, transform 0.15s;
+  /* ---- filters ---- */
+  .filters { max-width: 1200px; margin: 0 auto; padding: .25rem 2rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+  .chip {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: .35rem .8rem; border-radius: 999px; font-size: .85rem; transition: all .15s;
   }
-  .toggle:hover { border-color: var(--muted); transform: translateY(-1px); }
+  .chip:hover { border-color: var(--muted); }
+  .chip.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 
   main { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+  .empty { color: var(--muted); text-align: center; padding: 4rem 1rem; }
+  .empty .btn { margin-top: 1rem; }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1.75rem 1.25rem;
-  }
-
-  .card {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    background: none;
-    border: none;
-    text-align: left;
-    color: inherit;
-    font: inherit;
-    padding: 0;
-  }
+  /* ---- grid / cards ---- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1.75rem 1.25rem; }
+  .card { display: flex; flex-direction: column; gap: .6rem; background: none; border: none; text-align: left; color: inherit; padding: 0; position: relative; }
   .cover {
-    aspect-ratio: 1 / 1.5;
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--surface);
-    box-shadow: var(--shadow);
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    aspect-ratio: 1/1.5; border-radius: 8px; overflow: hidden; background: var(--surface);
+    box-shadow: var(--shadow); transition: transform .18s ease, box-shadow .18s ease;
   }
   .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .cover.placeholder {
-    display: grid;
-    place-items: center;
-    padding: 1rem;
-    border: 1px solid var(--border);
-  }
-  .cover.placeholder span {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.3;
-  }
+  .cover.placeholder { display: grid; place-items: center; padding: 1rem; border: 1px solid var(--border); }
+  .cover.placeholder span { font-size: .9rem; font-weight: 500; color: var(--muted); text-align: center; line-height: 1.3; }
   .card:hover .cover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+  .fav-badge { position: absolute; top: .5rem; right: .5rem; font-size: .9rem; filter: drop-shadow(0 1px 2px rgba(0,0,0,.4)); }
+  .meta .title { font-size: .92rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; }
+  .meta .author { font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+  .meta .status { font-size: .72rem; color: var(--muted); margin-top: .2rem; text-transform: capitalize; }
 
-  .meta .title {
-    font-size: 0.92rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-  }
-  .meta .author { font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+  /* ---- overlay base (reader + form + auth) ---- */
+  .overlay { position: fixed; inset: 0; background: var(--bg); overflow-y: auto; opacity: 0; visibility: hidden; transition: opacity .25s ease; z-index: 10; }
+  .overlay.open { opacity: 1; visibility: visible; }
+  .reader-inner, .form-inner { max-width: 720px; margin: 0 auto; padding: 1.5rem 1.5rem 6rem; }
+  .form-inner { max-width: 560px; }
+  .topbar { position: sticky; top: 1rem; display: flex; gap: .6rem; margin-bottom: 2rem; z-index: 1; }
 
-  /* Reader overlay */
-  .reader {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    overflow-y: auto;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.25s ease;
-    z-index: 10;
-  }
-  .reader.open { opacity: 1; visibility: visible; }
-  .reader-inner { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
-
-  .back {
-    position: sticky; top: 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.5rem 0.9rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    margin-bottom: 2rem;
-    transition: border-color 0.2s;
-  }
-  .back:hover { border-color: var(--muted); }
-
-  .book-head { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; align-items: flex-start; }
+  .book-head { display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-start; }
   .book-head .cover { width: 130px; flex-shrink: 0; }
-  .book-head h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
-  .book-head .sub { color: var(--muted); margin-top: 0.4rem; font-size: 1rem; }
-  .book-head .by { margin-top: 0.8rem; font-weight: 500; }
-  .book-head .stats { color: var(--muted); font-size: 0.88rem; margin-top: 0.3rem; }
+  .book-head h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; }
+  .book-head .sub { color: var(--muted); margin-top: .4rem; }
+  .book-head .by { margin-top: .8rem; font-weight: 500; }
+  .book-head .stats { color: var(--muted); font-size: .88rem; margin-top: .3rem; }
+  .pillrow { display: flex; gap: .5rem; margin-top: 1rem; flex-wrap: wrap; }
 
-  .body {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.05rem;
-    line-height: 1.7;
-  }
-  .body h2 { font-size: 1.4rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em; }
-  .body h3 { font-size: 1.15rem; margin: 1.6rem 0 0.6rem; }
+  .body { font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; line-height: 1.7; }
+  .body h2 { font-size: 1.4rem; margin: 2rem 0 .8rem; }
+  .body h3 { font-size: 1.15rem; margin: 1.6rem 0 .6rem; }
   .body p { margin: 0 0 1rem; }
   .body ul, .body ol { margin: 0 0 1rem 1.4rem; }
-  .body li { margin-bottom: 0.3rem; }
-  .body strong { font-weight: 700; }
-  .body em { font-style: italic; }
-  .body a { color: var(--text); }
-  .body blockquote {
-    border-left: 3px solid var(--border);
-    padding-left: 1rem; margin: 0 0 1rem;
-    color: var(--muted); font-style: italic;
+  .body strong { font-weight: 700; } .body em { font-style: italic; }
+  .body blockquote { border-left: 3px solid var(--border); padding-left: 1rem; margin: 0 0 1rem; color: var(--muted); font-style: italic; }
+
+  /* ---- highlights ---- */
+  .hl-section { margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  .hl-section h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+  .hl { border-left: 3px solid var(--border); padding: .2rem 0 .2rem 1rem; margin-bottom: 1rem; }
+  .hl .quote { font-style: italic; }
+  .hl .hl-note { font-size: .9rem; color: var(--muted); margin-top: .3rem; }
+  .hl .del { font-size: .75rem; color: var(--danger); background: none; border: none; padding: 0; margin-top: .3rem; }
+
+  /* ---- form ---- */
+  .field { margin-bottom: 1.1rem; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .checkrow { display: flex; align-items: center; gap: .5rem; }
+  .checkrow input { width: auto; }
+  .form-actions { display: flex; gap: .6rem; margin-top: 1.5rem; }
+
+  /* ---- auth ---- */
+  .auth-wrap { min-height: 80vh; display: grid; place-items: center; padding: 2rem; }
+  .auth-card { width: 100%; max-width: 380px; text-align: center; }
+  .auth-card h1 { margin-bottom: .5rem; }
+  .auth-card p { color: var(--muted); margin-bottom: 1.5rem; }
+  .auth-card .field { text-align: left; }
+
+  /* ---- toast ---- */
+  #toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(2rem);
+    background: var(--accent); color: var(--bg); padding: .7rem 1.1rem; border-radius: 10px;
+    font-size: .9rem; opacity: 0; transition: all .25s ease; z-index: 50; pointer-events: none;
   }
-  .body code {
-    font-family: ui-monospace, monospace;
-    background: var(--surface);
-    padding: 0.1rem 0.35rem;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.err { background: var(--danger); }
 
   @media (max-width: 520px) {
     .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
     .book-head { flex-direction: column; }
+    .row2 { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
-  <header>
-    <div class="brand">
+  <!-- ============ AUTH VIEW ============ -->
+  <div id="auth-view" class="auth-wrap hidden">
+    <div class="auth-card">
       <h1>Library</h1>
-      <span class="count" id="count"></span>
+      <p>Sign in to view and build your library.</p>
+      <form id="auth-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button class="btn primary" style="width:100%; justify-content:center" type="submit">Send magic link</button>
+      </form>
+      <p id="auth-msg" style="margin-top:1rem"></p>
+      <button class="btn icon" id="theme-auth" aria-label="Toggle theme" style="margin-top:1rem"></button>
     </div>
-    <button class="toggle" id="theme" aria-label="Toggle theme"></button>
-  </header>
+  </div>
 
-  <main>
-    <div class="grid" id="grid"></div>
-  </main>
+  <!-- ============ APP VIEW ============ -->
+  <div id="app-view" class="hidden">
+    <header>
+      <div class="brand"><h1>Library</h1><span class="count" id="count"></span></div>
+      <div class="controls">
+        <button class="btn primary" id="add-btn">+ Add book</button>
+        <button class="btn icon" id="theme" aria-label="Toggle theme"></button>
+        <span class="account" id="account"></span>
+        <button class="btn" id="signout">Sign out</button>
+      </div>
+    </header>
+    <div class="filters" id="filters"></div>
+    <main><div class="grid" id="grid"></div></main>
+  </div>
 
-  <div class="reader" id="reader">
+  <!-- ============ SETUP-NEEDED NOTICE ============ -->
+  <div id="setup-view" class="auth-wrap hidden">
+    <div class="auth-card">
+      <h1>Almost there</h1>
+      <p>Add your Supabase <code>URL</code> and <code>anon key</code> to <code>public/config.js</code>, then reload.</p>
+    </div>
+  </div>
+
+  <!-- ============ READER OVERLAY ============ -->
+  <div class="overlay" id="reader">
     <div class="reader-inner">
-      <button class="back" id="back">← Library</button>
+      <div class="topbar">
+        <button class="btn" id="reader-back">← Library</button>
+        <button class="btn" id="reader-edit">Edit</button>
+        <button class="btn danger" id="reader-delete">Delete</button>
+      </div>
       <div id="reader-content"></div>
     </div>
   </div>
 
+  <!-- ============ BOOK FORM OVERLAY ============ -->
+  <div class="overlay" id="form">
+    <div class="form-inner">
+      <div class="topbar"><button class="btn" id="form-cancel">← Cancel</button></div>
+      <h2 id="form-title" style="margin-bottom:1.5rem">Add book</h2>
+      <form id="book-form">
+        <div class="field"><label>Title *</label><input name="title" required /></div>
+        <div class="row2">
+          <div class="field"><label>Author</label><input name="author" /></div>
+          <div class="field"><label>Category</label><input name="category" /></div>
+        </div>
+        <div class="field"><label>Subtitle</label><input name="subtitle" /></div>
+        <div class="field"><label>Cover image URL</label><input name="cover_url" type="url" placeholder="https://..." /></div>
+        <div class="row2">
+          <div class="field"><label>Status</label>
+            <select name="status">
+              <option value="">—</option>
+              <option value="to_read">To read</option>
+              <option value="reading">Reading</option>
+              <option value="finished">Finished</option>
+            </select>
+          </div>
+          <div class="field"><label>Shelf</label><input name="shelf" placeholder="e.g. Philosophy" /></div>
+        </div>
+        <div class="field checkrow"><input id="fav" name="favorite" type="checkbox" /><label for="fav" style="margin:0">Favorite</label></div>
+        <div class="field"><label>Notes (markdown)</label><textarea name="body" rows="10"></textarea></div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit">Save</button>
+          <button class="btn" type="button" id="form-cancel2">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
   <script>
     const $ = (id) => document.getElementById(id);
-    let notes = [];
-    const bySlug = {};
+    const cfg = window.SUPABASE_CONFIG || {};
+    const configured = cfg.SUPABASE_URL && cfg.SUPABASE_URL !== "YOUR_PROJECT_URL"
+      && cfg.SUPABASE_ANON_KEY && cfg.SUPABASE_ANON_KEY !== "YOUR_ANON_KEY";
 
-    // Theme
+    // ---------- theme ----------
     const root = document.documentElement;
-    const savedTheme = localStorage.getItem("theme")
-      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    setTheme(savedTheme);
-    $("theme").onclick = () =>
-      setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+    setTheme(localStorage.getItem("theme")
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
     function setTheme(t) {
-      root.dataset.theme = t;
-      localStorage.setItem("theme", t);
-      $("theme").textContent = t === "dark" ? "☀" : "☾";
+      root.dataset.theme = t; localStorage.setItem("theme", t);
+      const icon = t === "dark" ? "☀" : "☾";
+      $("theme").textContent = icon; $("theme-auth").textContent = icon;
     }
+    const toggleTheme = () => setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+    $("theme").onclick = toggleTheme; $("theme-auth").onclick = toggleTheme;
 
+    // ---------- helpers ----------
     function escapeHtml(s) {
-      return String(s).replace(/[&<>"]/g, (c) =>
+      return String(s ?? "").replace(/[&<>"]/g, (c) =>
         ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     }
-
-    // Build a cover element (DOM, not string) so image-error fallback is robust.
-    function coverEl(n) {
+    function toast(msg, isErr) {
+      const t = $("toast"); t.textContent = msg;
+      t.classList.toggle("err", !!isErr); t.classList.add("show");
+      clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+    function coverEl(b) {
       const div = document.createElement("div");
       div.className = "cover";
-      if (n.coverUrl) {
+      if (b.cover_url) {
         const img = document.createElement("img");
-        img.loading = "lazy";
-        img.alt = n.title;
-        img.src = n.coverUrl;
-        img.onerror = () => {
-          div.classList.add("placeholder");
-          div.innerHTML = `<span>${escapeHtml(n.title)}</span>`;
-        };
+        img.loading = "lazy"; img.alt = b.title; img.src = b.cover_url;
+        img.onerror = () => { div.classList.add("placeholder"); div.innerHTML = `<span>${escapeHtml(b.title)}</span>`; };
         div.appendChild(img);
       } else {
-        div.classList.add("placeholder");
-        div.innerHTML = `<span>${escapeHtml(n.title)}</span>`;
+        div.classList.add("placeholder"); div.innerHTML = `<span>${escapeHtml(b.title)}</span>`;
       }
       return div;
     }
 
-    function renderGrid() {
-      $("count").textContent = `${notes.length} books`;
-      const grid = $("grid");
-      grid.innerHTML = "";
-      for (const n of notes) {
-        const card = document.createElement("button");
-        card.className = "card";
-        card.onclick = () => openBook(n.slug);
-        card.appendChild(coverEl(n));
-        const meta = document.createElement("div");
-        meta.className = "meta";
-        meta.innerHTML =
-          `<div class="title">${escapeHtml(n.title)}</div>` +
-          (n.author ? `<div class="author">${escapeHtml(n.author)}</div>` : "");
-        card.appendChild(meta);
-        grid.appendChild(card);
+    // ---------- boot ----------
+    if (!configured) {
+      $("setup-view").classList.remove("hidden");
+    } else {
+      boot();
+    }
+
+    function boot() {
+      const { createClient } = window.supabase;
+      const db = createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+      let books = [], byId = {}, filter = "all", session = null;
+
+      const FILTERS = [
+        ["all", "All"], ["reading", "Reading"], ["finished", "Finished"],
+        ["to_read", "To read"], ["favorite", "Favorites"],
+      ];
+
+      // ----- auth -----
+      $("auth-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const email = $("email").value.trim();
+        $("auth-msg").textContent = "Sending...";
+        const { error } = await db.auth.signInWithOtp({
+          email, options: { emailRedirectTo: location.origin },
+        });
+        $("auth-msg").textContent = error ? error.message : "Check your email for the login link.";
+      };
+      $("signout").onclick = () => db.auth.signOut();
+
+      db.auth.getSession().then(({ data }) => { session = data.session; render(); });
+      db.auth.onAuthStateChange((_e, s) => { session = s; render(); });
+
+      function render() {
+        const authed = !!session;
+        $("auth-view").classList.toggle("hidden", authed);
+        $("app-view").classList.toggle("hidden", !authed);
+        if (authed) {
+          $("account").textContent = session.user.email;
+          renderFilters();
+          loadBooks();
+        }
       }
-    }
 
-    function openBook(slug) {
-      const n = bySlug[slug];
-      if (!n) return;
-      if (location.hash !== "#" + slug) location.hash = slug;
-      const stats = [
-        n.totalPage ? `${n.totalPage} pages` : "",
-        n.publishDate ? String(n.publishDate).slice(0, 4) : "",
-        n.category || "",
-      ].filter(Boolean).join("  ·  ");
-      const c = $("reader-content");
-      c.innerHTML = "";
-      const head = document.createElement("div");
-      head.className = "book-head";
-      head.appendChild(coverEl(n));
-      const info = document.createElement("div");
-      info.innerHTML =
-        `<h2>${escapeHtml(n.title)}</h2>` +
-        (n.subtitle ? `<div class="sub">${escapeHtml(n.subtitle)}</div>` : "") +
-        (n.author ? `<div class="by">${escapeHtml(n.author)}</div>` : "") +
-        (stats ? `<div class="stats">${escapeHtml(stats)}</div>` : "");
-      head.appendChild(info);
-      c.appendChild(head);
-      const body = document.createElement("div");
-      body.className = "body";
-      body.innerHTML = marked.parse(n.body || "");
-      c.appendChild(body);
-      $("reader").classList.add("open");
-      window.scrollTo(0, 0);
-    }
-
-    function closeReader() {
-      $("reader").classList.remove("open");
-      if (location.hash) history.pushState("", "", location.pathname);
-    }
-    $("back").onclick = closeReader;
-    addEventListener("keydown", (e) => e.key === "Escape" && closeReader());
-    addEventListener("hashchange", routeFromHash);
-    function routeFromHash() {
-      const slug = location.hash.slice(1);
-      if (slug && bySlug[slug]) openBook(slug);
-      else $("reader").classList.remove("open");
-    }
-
-    fetch("notes.json")
-      .then((r) => r.json())
-      .then((d) => {
-        notes = d.notes;
-        notes.forEach((n) => (bySlug[n.slug] = n));
+      // ----- data -----
+      async function loadBooks() {
+        const { data, error } = await db.from("books").select("*").order("created_at", { ascending: false });
+        if (error) return toast(error.message, true);
+        books = data; byId = {}; books.forEach((b) => (byId[b.id] = b));
         renderGrid();
-        routeFromHash();
-      })
-      .catch((e) => {
-        $("grid").innerHTML = `<p style="color:var(--muted)">Failed to load notes.json</p>`;
-        console.error(e);
+      }
+
+      function visible() {
+        if (filter === "all") return books;
+        if (filter === "favorite") return books.filter((b) => b.favorite);
+        return books.filter((b) => b.status === filter);
+      }
+
+      function renderFilters() {
+        $("filters").innerHTML = "";
+        for (const [key, label] of FILTERS) {
+          const c = document.createElement("button");
+          c.className = "chip" + (filter === key ? " active" : "");
+          c.textContent = label;
+          c.onclick = () => { filter = key; renderFilters(); renderGrid(); };
+          $("filters").appendChild(c);
+        }
+      }
+
+      function renderGrid() {
+        const list = visible();
+        $("count").textContent = `${list.length} book${list.length === 1 ? "" : "s"}`;
+        const grid = $("grid"); grid.innerHTML = "";
+        if (!list.length) {
+          const e = document.createElement("div");
+          e.className = "empty";
+          e.innerHTML = filter === "all"
+            ? `<p>Your library is empty.</p>`
+            : `<p>No books in this filter.</p>`;
+          if (filter === "all") {
+            const b = document.createElement("button");
+            b.className = "btn primary"; b.textContent = "+ Add your first book";
+            b.onclick = () => openForm();
+            e.appendChild(b);
+          }
+          grid.appendChild(e); return;
+        }
+        for (const b of list) {
+          const card = document.createElement("button");
+          card.className = "card";
+          card.onclick = () => openReader(b.id);
+          card.appendChild(coverEl(b));
+          if (b.favorite) {
+            const fav = document.createElement("div");
+            fav.className = "fav-badge"; fav.textContent = "★"; card.appendChild(fav);
+          }
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          meta.innerHTML =
+            `<div class="title">${escapeHtml(b.title)}</div>` +
+            (b.author ? `<div class="author">${escapeHtml(b.author)}</div>` : "") +
+            (b.status ? `<div class="status">${escapeHtml(b.status.replace("_", " "))}</div>` : "");
+          card.appendChild(meta);
+          grid.appendChild(card);
+        }
+      }
+
+      // ----- reader -----
+      async function openReader(id) {
+        const b = byId[id]; if (!b) return;
+        const stats = [b.category || "", b.shelf ? `Shelf: ${b.shelf}` : ""].filter(Boolean).join("  ·  ");
+        const c = $("reader-content"); c.innerHTML = "";
+        const head = document.createElement("div"); head.className = "book-head";
+        head.appendChild(coverEl(b));
+        const info = document.createElement("div");
+        info.innerHTML =
+          `<h2>${escapeHtml(b.title)}</h2>` +
+          (b.subtitle ? `<div class="sub">${escapeHtml(b.subtitle)}</div>` : "") +
+          (b.author ? `<div class="by">${escapeHtml(b.author)}</div>` : "") +
+          (stats ? `<div class="stats">${escapeHtml(stats)}</div>` : "");
+        const pills = document.createElement("div"); pills.className = "pillrow";
+        ["to_read", "reading", "finished"].forEach((s) => {
+          const btn = document.createElement("button");
+          btn.className = "chip" + (b.status === s ? " active" : "");
+          btn.textContent = s.replace("_", " ");
+          btn.onclick = () => setField(b, "status", b.status === s ? null : s);
+          pills.appendChild(btn);
+        });
+        const favBtn = document.createElement("button");
+        favBtn.className = "chip" + (b.favorite ? " active" : "");
+        favBtn.textContent = b.favorite ? "★ Favorite" : "☆ Favorite";
+        favBtn.onclick = () => setField(b, "favorite", !b.favorite);
+        pills.appendChild(favBtn);
+        info.appendChild(pills); head.appendChild(info); c.appendChild(head);
+
+        const body = document.createElement("div"); body.className = "body";
+        body.innerHTML = b.body ? marked.parse(b.body) : `<p style="color:var(--muted)">No notes yet. Hit Edit to add some.</p>`;
+        c.appendChild(body);
+
+        // highlights
+        const hl = document.createElement("div"); hl.className = "hl-section";
+        hl.innerHTML = `<h3>Highlights</h3>`;
+        const listEl = document.createElement("div"); hl.appendChild(listEl);
+        const form = document.createElement("form");
+        form.innerHTML =
+          `<div class="field"><textarea name="quote" rows="2" placeholder="Add a quote..." required></textarea></div>` +
+          `<div class="field"><input name="note" placeholder="Optional note" /></div>` +
+          `<button class="btn" type="submit">Add highlight</button>`;
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          const fd = new FormData(form);
+          const { error } = await db.from("highlights").insert({
+            book_id: b.id, quote: fd.get("quote"), note: fd.get("note") || null,
+          });
+          if (error) return toast(error.message, true);
+          form.reset(); loadHighlights(b.id, listEl);
+        };
+        hl.appendChild(form); c.appendChild(hl);
+        loadHighlights(b.id, listEl);
+
+        $("reader-edit").onclick = () => openForm(b);
+        $("reader-delete").onclick = () => deleteBook(b);
+        $("reader").classList.add("open");
+        window.scrollTo(0, 0);
+      }
+
+      async function loadHighlights(bookId, listEl) {
+        const { data, error } = await db.from("highlights").select("*")
+          .eq("book_id", bookId).order("created_at", { ascending: true });
+        if (error) return;
+        listEl.innerHTML = "";
+        for (const h of data) {
+          const el = document.createElement("div"); el.className = "hl";
+          el.innerHTML = `<div class="quote">"${escapeHtml(h.quote)}"</div>` +
+            (h.note ? `<div class="hl-note">${escapeHtml(h.note)}</div>` : "");
+          const del = document.createElement("button");
+          del.className = "del"; del.textContent = "Delete";
+          del.onclick = async () => {
+            await db.from("highlights").delete().eq("id", h.id);
+            loadHighlights(bookId, listEl);
+          };
+          el.appendChild(del); listEl.appendChild(el);
+        }
+      }
+
+      async function setField(b, field, value) {
+        const { error } = await db.from("books").update({ [field]: value }).eq("id", b.id);
+        if (error) return toast(error.message, true);
+        b[field] = value;
+        openReader(b.id); renderGrid();
+      }
+
+      async function deleteBook(b) {
+        if (!confirm(`Delete "${b.title}"? This cannot be undone.`)) return;
+        const { error } = await db.from("books").delete().eq("id", b.id);
+        if (error) return toast(error.message, true);
+        $("reader").classList.remove("open");
+        toast("Deleted"); loadBooks();
+      }
+
+      // ----- form (add / edit) -----
+      let editing = null;
+      function openForm(b) {
+        editing = b || null;
+        $("form-title").textContent = b ? "Edit book" : "Add book";
+        const f = $("book-form");
+        f.title.value = b?.title || ""; f.author.value = b?.author || "";
+        f.category.value = b?.category || ""; f.subtitle.value = b?.subtitle || "";
+        f.cover_url.value = b?.cover_url || ""; f.status.value = b?.status || "";
+        f.shelf.value = b?.shelf || ""; f.favorite.checked = !!b?.favorite;
+        f.body.value = b?.body || "";
+        $("form").classList.add("open"); window.scrollTo(0, 0);
+      }
+      function closeForm() { $("form").classList.remove("open"); }
+
+      $("book-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const payload = {
+          title: f.title.value.trim(), author: f.author.value.trim() || null,
+          category: f.category.value.trim() || null, subtitle: f.subtitle.value.trim() || null,
+          cover_url: f.cover_url.value.trim() || null, status: f.status.value || null,
+          shelf: f.shelf.value.trim() || null, favorite: f.favorite.checked,
+          body: f.body.value || null,
+        };
+        const res = editing
+          ? await db.from("books").update(payload).eq("id", editing.id)
+          : await db.from("books").insert(payload);
+        if (res.error) return toast(res.error.message, true);
+        closeForm();
+        if ($("reader").classList.contains("open") && editing) {
+          await loadBooks(); openReader(editing.id);
+        } else { loadBooks(); }
+        toast(editing ? "Saved" : "Book added");
+      };
+
+      $("add-btn").onclick = () => openForm();
+      $("form-cancel").onclick = closeForm;
+      $("form-cancel2").onclick = closeForm;
+      $("reader-back").onclick = () => $("reader").classList.remove("open");
+      addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if ($("form").classList.contains("open")) closeForm();
+        else $("reader").classList.remove("open");
       });
+
+      // expose for debugging
+      window._db = db;
+    }
   </script>
 </body>
 </html>
