@@ -1,0 +1,13 @@
+views:
+  - type: cards
+    name: Card Library
+    filters:
+      and:
+        - file.folder == "Resources/Book/Book Notes"
+    groupBy:
+      property: status
+      direction: ASC
+    order: []
+    image: note.coverUrl
+    imageAspectRatio: 1.5
+    cardSize: 120
