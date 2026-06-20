@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Library</title>
+<link rel="preconnect" href="https://m.media-amazon.com" />
+<style>
+  :root {
+    --bg: #faf9f7;
+    --surface: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e8e6e1;
+    --accent: #1a1a1a;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1), 0 16px 40px rgba(0, 0, 0, 0.12);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f10;
+    --surface: #1a1a1c;
+    --text: #f2f1ee;
+    --muted: #9a9a9a;
+    --border: #2a2a2d;
+    --accent: #f2f1ee;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.5), 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 1.5rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 0.75rem; }
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .count { color: var(--muted); font-size: 0.95rem; }
+
+  .toggle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: grid; place-items: center;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .toggle:hover { border-color: var(--muted); transform: translateY(-1px); }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.75rem 1.25rem;
+  }
+
+  .card {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: none;
+    border: none;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+  }
+  .cover {
+    aspect-ratio: 1 / 1.5;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover.placeholder {
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    border: 1px solid var(--border);
+  }
+  .cover.placeholder span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .card:hover .cover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+  .meta .title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  .meta .author { font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+
+  /* Reader overlay */
+  .reader {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    overflow-y: auto;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.25s ease;
+    z-index: 10;
+  }
+  .reader.open { opacity: 1; visibility: visible; }
+  .reader-inner { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+
+  .back {
+    position: sticky; top: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    margin-bottom: 2rem;
+    transition: border-color 0.2s;
+  }
+  .back:hover { border-color: var(--muted); }
+
+  .book-head { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; align-items: flex-start; }
+  .book-head .cover { width: 130px; flex-shrink: 0; }
+  .book-head h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+  .book-head .sub { color: var(--muted); margin-top: 0.4rem; font-size: 1rem; }
+  .book-head .by { margin-top: 0.8rem; font-weight: 500; }
+  .book-head .stats { color: var(--muted); font-size: 0.88rem; margin-top: 0.3rem; }
+
+  .body {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+  .body h2 { font-size: 1.4rem; margin: 2rem 0 0.8rem; letter-spacing: -0.01em; }
+  .body h3 { font-size: 1.15rem; margin: 1.6rem 0 0.6rem; }
+  .body p { margin: 0 0 1rem; }
+  .body ul, .body ol { margin: 0 0 1rem 1.4rem; }
+  .body li { margin-bottom: 0.3rem; }
+  .body strong { font-weight: 700; }
+  .body em { font-style: italic; }
+  .body a { color: var(--text); }
+  .body blockquote {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem; margin: 0 0 1rem;
+    color: var(--muted); font-style: italic;
+  }
+  .body code {
+    font-family: ui-monospace, monospace;
+    background: var(--surface);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  @media (max-width: 520px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .book-head { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>Library</h1>
+      <span class="count" id="count"></span>
+    </div>
+    <button class="toggle" id="theme" aria-label="Toggle theme"></button>
+  </header>
+
+  <main>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <div class="reader" id="reader">
+    <div class="reader-inner">
+      <button class="back" id="back">← Library</button>
+      <div id="reader-content"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let notes = [];
+    const bySlug = {};
+
+    // Theme
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem("theme")
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setTheme(savedTheme);
+    $("theme").onclick = () =>
+      setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+    function setTheme(t) {
+      root.dataset.theme = t;
+      localStorage.setItem("theme", t);
+      $("theme").textContent = t === "dark" ? "☀" : "☾";
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"]/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    }
+
+    // Build a cover element (DOM, not string) so image-error fallback is robust.
+    function coverEl(n) {
+      const div = document.createElement("div");
+      div.className = "cover";
+      if (n.coverUrl) {
+        const img = document.createElement("img");
+        img.loading = "lazy";
+        img.alt = n.title;
+        img.src = n.coverUrl;
+        img.onerror = () => {
+          div.classList.add("placeholder");
+          div.innerHTML = `<span>${escapeHtml(n.title)}</span>`;
+        };
+        div.appendChild(img);
+      } else {
+        div.classList.add("placeholder");
+        div.innerHTML = `<span>${escapeHtml(n.title)}</span>`;
+      }
+      return div;
+    }
+
+    function renderGrid() {
+      $("count").textContent = `${notes.length} books`;
+      const grid = $("grid");
+      grid.innerHTML = "";
+      for (const n of notes) {
+        const card = document.createElement("button");
+        card.className = "card";
+        card.onclick = () => openBook(n.slug);
+        card.appendChild(coverEl(n));
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.innerHTML =
+          `<div class="title">${escapeHtml(n.title)}</div>` +
+          (n.author ? `<div class="author">${escapeHtml(n.author)}</div>` : "");
+        card.appendChild(meta);
+        grid.appendChild(card);
+      }
+    }
+
+    function openBook(slug) {
+      const n = bySlug[slug];
+      if (!n) return;
+      if (location.hash !== "#" + slug) location.hash = slug;
+      const stats = [
+        n.totalPage ? `${n.totalPage} pages` : "",
+        n.publishDate ? String(n.publishDate).slice(0, 4) : "",
+        n.category || "",
+      ].filter(Boolean).join("  ·  ");
+      const c = $("reader-content");
+      c.innerHTML = "";
+      const head = document.createElement("div");
+      head.className = "book-head";
+      head.appendChild(coverEl(n));
+      const info = document.createElement("div");
+      info.innerHTML =
+        `<h2>${escapeHtml(n.title)}</h2>` +
+        (n.subtitle ? `<div class="sub">${escapeHtml(n.subtitle)}</div>` : "") +
+        (n.author ? `<div class="by">${escapeHtml(n.author)}</div>` : "") +
+        (stats ? `<div class="stats">${escapeHtml(stats)}</div>` : "");
+      head.appendChild(info);
+      c.appendChild(head);
+      const body = document.createElement("div");
+      body.className = "body";
+      body.innerHTML = marked.parse(n.body || "");
+      c.appendChild(body);
+      $("reader").classList.add("open");
+      window.scrollTo(0, 0);
+    }
+
+    function closeReader() {
+      $("reader").classList.remove("open");
+      if (location.hash) history.pushState("", "", location.pathname);
+    }
+    $("back").onclick = closeReader;
+    addEventListener("keydown", (e) => e.key === "Escape" && closeReader());
+    addEventListener("hashchange", routeFromHash);
+    function routeFromHash() {
+      const slug = location.hash.slice(1);
+      if (slug && bySlug[slug]) openBook(slug);
+      else $("reader").classList.remove("open");
+    }
+
+    fetch("notes.json")
+      .then((r) => r.json())
+      .then((d) => {
+        notes = d.notes;
+        notes.forEach((n) => (bySlug[n.slug] = n));
+        renderGrid();
+        routeFromHash();
+      })
+      .catch((e) => {
+        $("grid").innerHTML = `<p style="color:var(--muted)">Failed to load notes.json</p>`;
+        console.error(e);
+      });
+  </script>
+</body>
+</html>
